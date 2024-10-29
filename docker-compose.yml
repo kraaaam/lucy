@@ -1,0 +1,43 @@
+services:
+  
+  postgres:
+    image: postgres:17.0-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: database
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  api:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+
+  # worker:
+  #   restart: always
+  #   image: lucy
+  #   depends_on:
+  #     - redis
+  #   volumes:
+  #     - ./:/app
+  #   environment:
+  #     CELERY_BROKER_URL: redis://redis:6379/0
+  #   command: celery -A config.celery worker -l info
+
+  # redis:
+  #   restart: always
+  #   image: redis:5.0
+  #   volumes:
+  #     - redis-volume:/data/
+  #   command: redis-server --appendonly yes
+
+volumes:
+  redis-volume:
+
+  postgres-data:
