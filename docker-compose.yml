@@ -19,24 +19,6 @@ services:
     volumes:
       - .:/app
 
-  # worker:
-  #   restart: always
-  #   image: lucy
-  #   depends_on:
-  #     - redis
-  #   volumes:
-  #     - ./:/app
-  #   environment:
-  #     CELERY_BROKER_URL: redis://redis:6379/0
-  #   command: celery -A config.celery worker -l info
-
-  # redis:
-  #   restart: always
-  #   image: redis:5.0
-  #   volumes:
-  #     - redis-volume:/data/
-  #   command: redis-server --appendonly yes
-
 volumes:
   redis-volume:
 
