@@ -4,6 +4,7 @@ Admin configuration for users app.
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.utils.translation import gettext_lazy as _
 
 from .models import User
 
@@ -12,13 +13,28 @@ from .models import User
 class UserAdmin(BaseUserAdmin):
     """Admin interface for User model."""
 
-    list_display = ["email", "username", "is_staff", "is_active", "created_at"]
-    list_filter = ["is_staff", "is_active", "created_at"]
-    search_fields = ["email", "username"]
+    list_display = ["email", "is_staff", "is_active", "is_verified", "created_at"]
+    list_filter = ["is_staff", "is_active", "is_verified", "created_at"]
+    search_fields = ["email"]
     ordering = ["-created_at"]
 
-    fieldsets = BaseUserAdmin.fieldsets + (
-        ("Timestamps", {"fields": ("created_at", "modified_at")}),
-        ("UUID", {"fields": ("uid",)}),
+    # Override fieldsets: BaseUserAdmin references username which no longer exists.
+    fieldsets = (
+        (None, {"fields": ("email", "password")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name")}),
+        (
+            _("Permissions"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                ),
+            },
+        ),
+        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
+
     readonly_fields = ["created_at", "modified_at", "uid"]
